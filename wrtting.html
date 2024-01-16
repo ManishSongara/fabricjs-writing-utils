@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fabric.js</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.0.0-beta.12/fabric.min.js"></script>
+  <style>
+    body,
+    html {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+
+  <canvas id="myCanvas"></canvas>
+
+  <button onclick="toggleEraser()">Eraser</button>
+  <button onclick="undo()">Undo</button>
+  <button onclick="clearCanvas()">Clear</button>
+
+  <script>
+    const canvas = new fabric.Canvas('myCanvas', {
+      isDrawingMode: true,
+      backgroundColor: 'white'
+    });
+
+    canvas.setDimensions({
+      width: window.innerWidth,
+      height: 600
+    });
+
+    window.addEventListener('resize', function () {
+      canvas.setDimensions({
+        width: window.innerWidth,
+        height: 200,       });
+    });
+
+    const originalBrush = new fabric.PencilBrush(canvas);
+    originalBrush.width = 5;
+    originalBrush.color = 'black';
+    canvas.freeDrawingBrush = originalBrush;
+
+    function toggleEraser() {
+      console.log('Switch to the eraser brush');
+
+      if (!originalBrush) {
+        console.error('Original brush is not defined!');
+        return;
+      }
+
+      const eraserBrush = new fabric.PencilBrush(canvas);
+      eraserBrush.color = 'white';
+      eraserBrush.width = 20;
+
+      if (canvas.freeDrawingBrush !== originalBrush) {
+        canvas.freeDrawingBrush = originalBrush;
+        canvas.isDrawingMode = true;
+      } else {
+        canvas.freeDrawingBrush = eraserBrush;
+        canvas.isDrawingMode = true;
+
+        console.log(eraserBrush);
+      }
+    }
+
+    function undo() {
+      const objects = canvas.getObjects();
+      if (objects.length > 0) {
+        canvas.remove(objects[objects.length - 1]);
+        canvas.renderAll();
+      }
+    }
+
+    function clearCanvas() {
+      canvas.clear();
+    }
+  </script>
+
+</body>
+
+</html>
